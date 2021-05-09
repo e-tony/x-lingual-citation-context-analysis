@@ -22,7 +22,6 @@ class Dataset:
     def format(self, dataset):
         dataset = dataset.map(self._encode, batched=True)
         dataset.set_format(type='torch', columns=['input_ids', 'token_type_ids', 'attention_mask', 'label'])
-        # dataloader = torch.utils.data.DataLoader(data, batch_size=self.batch_size)
         return dataset
     
     def format_data(self, tokenizer, batch_size=None):
@@ -35,10 +34,3 @@ class Dataset:
         self.validation_dataset = self.format(self.dataset['validation'])
         self.test_dataset = self.format(self.dataset['test'])
         logging.info('Done formatting.')
-
-
-class UnarxiveDataset:
-    def read_file(path):
-        df = pd.read_csv(path, names=[''])
-
-        return df

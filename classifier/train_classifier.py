@@ -7,9 +7,9 @@ import pandas as pd
 import random
 import datasets
 
-from project.model import CitationClassificationModel
-from project.reader import Dataset
-from project.helper import init_logger, make_output_dir
+from model import CitationClassificationModel
+from reader import Dataset
+from helper import init_logger, make_output_dir
 
 
 class CitationClassifier:
@@ -24,7 +24,8 @@ class CitationClassifier:
 
         self.trained_model_path = None
 
-        init_logger(args, config, self.output_dir)  # start logging
+        # start logging
+        init_logger(args, config, self.output_dir)
 
         self.load_model()
 
@@ -32,10 +33,10 @@ class CitationClassifier:
         logging.info('Preparing data...')
 
         if self.dataset_name == 'Athar':
-            path = Path('./data/citation_sentiment/citation_sentiment_corpus_cleaned.tsv')
-            train_path = Path('./data/citation_sentiment/citation_sentiment_corpus_cleaned_train.tsv')
-            val_path = Path('./data/citation_sentiment/citation_sentiment_corpus_cleaned_val.tsv')
-            test_path = Path('./data/citation_sentiment/citation_sentiment_corpus_cleaned_test.tsv')
+            path = Path('../data/citation_sentiment/citation_sentiment_corpus_cleaned.tsv')
+            train_path = Path('../data/citation_sentiment/citation_sentiment_corpus_cleaned_train.tsv')
+            val_path = Path('../data/citation_sentiment/citation_sentiment_corpus_cleaned_val.tsv')
+            test_path = Path('../data/citation_sentiment/citation_sentiment_corpus_cleaned_test.tsv')
             names = ['source_paper', 'target_paper', 'label', 'string']
 
             if path.is_file():
@@ -102,21 +103,8 @@ class CitationClassifier:
     def train(self):
         self.classifier.train(self.data['train'], self.data['val'], self.hp_search)
         self.trained_model_path = self.output_dir / 'pytorch_model.bin'
-        # self.trained_model_path = self.output_dir / 'model'
-        # self.classifier.save_model(self.trained_model_path)
         
     def eval(self, model_path=None):
-        # if model_path:  # load model path via command line argument
-        #     model = model_path
-        # elif self.trained_model_path:  # load model via trained model path
-        #     model_path = self.trained_model_path
-        # else:
-        #     model_path = self.model_name  # load model via config parameter value
-
-        # model = self.load_model(model_path)
-        # self.classifier.load_model(model_path)
-
-        # self.classifier.predict(self.classifier.model, self.dataset.dataset['test'])
         self.classifier.predict(dataset=self.dataset.dataset['test'], model_path=model_path)
 
 if __name__=="__main__":
@@ -142,5 +130,4 @@ if __name__=="__main__":
         trainer.train()
 
     if args.do_eval:
-        # if args.eval_model:
         trainer.eval(args.eval_model)
