@@ -27,7 +27,7 @@ def main(*, xling_path, citations_path, db_path, make_sample=False, sample_path=
     xling_path = format_file(path=xling_path, xling_path=xling_path)
     mono_path = format_file(path=mono_path, xling_path=xling_path)
 
-    print("Finished prepareing data.")
+    print("Finished preparing data.")
 
 
 if __name__ == "__main__":
