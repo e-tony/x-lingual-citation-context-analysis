@@ -69,7 +69,6 @@ def make_sample(*, xling_path, adj_path):
                 del non_lang_ids[idx]
                 num_samples += 1
             else:
-                # print(f'Attepted to write row with lang: name: {name}, j:{str(j)}, idx:{idx}, idx_val:{idx_val}')
                 pass
 
             if j == len(lang_ids)-1:
@@ -91,13 +90,7 @@ def make_sample(*, xling_path, adj_path):
 def filter_db(*, db_path, citations_path):
     timestamp = datetime.datetime.fromtimestamp(time.time()).strftime('%Y%m%d-%H%M%S')
 
-    # output_dir = Path(output_dir)
-
-    # check that file/dir exists
     assert Path(db_path).is_file()
-    # if not output_dir.is_dir():
-    #     output_dir.mkdirs(parents=True)
-    # assert (output_dir.is_dir())
 
     # create database engine
     db_uri = 'sqlite:///{}'.format(db_path)
@@ -113,8 +106,6 @@ def filter_db(*, db_path, citations_path):
         names = ['lang', 'uuid', 'citing_mid', 'cited_mid', 'citing_aid', 'cited_aid', 'bibitem_str']
     citations_df = pd.read_csv(citations_path, sep='\t', names=names, low_memory=False, quoting=csv.QUOTE_NONE)
     citations_df = citations_df.set_index('uuid')
-
-    # output_df = pd.DataFrame(columns=['uuid', 'citing_mad_id', 'cited_mag_id', 'citing_arxiv_id', 'cited_arxiv_id', 'bibitem'])
 
     # filter database entries
     with db_engine.connect() as conn:
@@ -135,7 +126,6 @@ def filter_db(*, db_path, citations_path):
                 dropped += 1
                 change = True
             else:
-                # output_df.loc[kept] = list(row)
                 kept += 1
 
             i += 1
@@ -146,14 +136,7 @@ def filter_db(*, db_path, citations_path):
                     conn.commit()
                     change = False
     
-    # save file
-    # output_path = output_dir / f'{db_path.name.split(".")[0]}_{timestamp}.tsv'
-    # output_df.to_csv(output_path, sep='\t')
-
-    # print(f'Saved file to path: {output_path}')
     print(f'Finished filtering "{db_path}"')
-
-    # return output_path
 
 
 def normalize_citations(text):
@@ -215,9 +198,11 @@ def label_mixed(*, xling_path, mono_path):
 
 
 def format_file(*, path, xling_path=None):
-    assert (Path(path).is_file())
+    assert Path(path).is_file()
+    if xling_path:
+        assert Path(xling_path.is_file())
 
-    if 'sample' in dataset_path:
+    if 'sample' in path:
         names = ['uuid', 'ctd_mid', 'ctg_mid', 'ctd_aid', 'ctg_aid', 'context']
     else:
         names = ['uuid', 'lang', 'ctd_mid', 'ctg_mid', 'ctd_aid', 'ctg_aid', 'published', 'category', 'context']
