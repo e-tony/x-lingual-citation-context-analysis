@@ -10,14 +10,12 @@ from transformers import get_linear_schedule_with_warmup
 from datasets import load_dataset
 from tqdm import tqdm
 import numpy as np
-# from torchinfo import summary
 import time
 import datetime
 from pathlib import Path
 import logging
 from sklearn.metrics import classification_report
-
-from project.metrics import compute_metrics_sklearn, compute_metrics_torch
+from metrics import compute_metrics_sklearn, compute_metrics_torch
 
 
 class CitationClassificationModel:
@@ -31,15 +29,9 @@ class CitationClassificationModel:
             self.logging_dir.mkdir(parents=True)
 
         # Model parameters
-        # self.model_name = model_name
         self.model_name = config['PARAM']['model']
         self.do_lower_case = True if self.config['PARAM']['do_lower_case'] == 'True' else False
         # self.use_bfloat16 = True if self.config['PARAM']['bfloat16'] == 'True' else False
-
-        # try:
-        #     assert ('uncased' not in model_name and self.do_lower_case == 'True')
-        # except:
-        #     raise Exception(f'Model and configuration case mismatch for model: "{model_name}".')
 
         logging.info('Loading pre-trained tokenizer...')
         self.tokenizer = BertTokenizerFast.from_pretrained(self.model_name)
@@ -55,18 +47,10 @@ class CitationClassificationModel:
         self.model = AutoModelForSequenceClassification.from_pretrained(self.model_name, config=self.model_config)
         logging.info(f'Loaded model from path: {self.model_name}')
 
-        # if self.debug:
-        #     logging.info('Model summary:')
-        #     _summary = summary(self.model, torch.zeros((self.batch_size, self.max_len), dtype=torch.long), show_input=True)
-        #     logging.info(summary)
-    
     def model_init(self):
         return AutoModelForSequenceClassification.from_pretrained(self.model_name, config=self.model_config)
     
     def update_config(self):
-        # for k,v in parameters.items():
-        #     if k in self.model_config:
-        #         self.model_config[k] = v
         self.model_config.num_labels = int(self.config['CONFIG']['labels'])
 
     def init_training(self):
@@ -80,9 +64,6 @@ class CitationClassificationModel:
     def save_model(self, save_path: Path):
         if not save_path.is_dir():
             save_path.mkdir(parents=True)
-        # if not save_path.parent.is_dir():
-        #     save_path.parent.mkdir(parents=True)
-        # torch.save(self.model.state_dict(), save_path)
         torch.save(self.model, save_path)
         logging.info(f'Saved model to path: {save_path}')
 
@@ -157,7 +138,6 @@ class CitationClassificationModel:
             logging.info('Validation results:')
             logging.info(f'Eval loss: {res["eval_loss"]}, Eval acc: {res["eval_accuracy"]}, Eval F1: {res["eval_f1"]}, Eval P: {res["eval_precision"]}, Eval R: {res["eval_recall"]}')
             logging.info('Done evaluating.')
-            # self.trainer = trainer
 
             trainer.save_model()
             trainer.save_state()
@@ -165,7 +145,6 @@ class CitationClassificationModel:
             assert (self.trained_model_path.is_file())
             logging.info(f'Saved model to path: {self.output_dir}')
 
-    # def predict(self, model, dataset, get_performance=True):
     def predict(self, dataset, model_path=None, get_performance=True):
 
         logging.info('Testing model...')
@@ -190,8 +169,8 @@ class CitationClassificationModel:
                 _pred.append(outputs)
 
         true = torch.tensor([v for l in true for v in l])
-        _pred = [v for l in _pred for v in l]
-        pred = torch.tensor([[torch.tensor(l['score']) for l in p] for p in _pred])
+        pred = [v for l in _pred for v in l]
+        pred = torch.tensor([[torch.tensor(l['score']) for l in p] for p in pred])
 
         num_classes = int(self.config['CONFIG']['labels'])
         acc, p, r, f1 = compute_metrics_torch(pred, true, num_classes)
