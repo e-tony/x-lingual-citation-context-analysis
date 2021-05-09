@@ -1,10 +1,12 @@
+"""
+Usage: python prepare_data.py -db ../data/samplerefs.db -cp -ms -xp ../data/contexts_with_uuids_window=0_full.csv -sp ../data/in_lang_docs_all_bibitems.tsv
+"""
+
 from argparse import ArgumentParser
 from prepare_data_helper import *
 
 
 def main(*, xling_path, citations_path, db_path, make_sample=False, sample_path=None):
-    # run extract_contexts_mod_orig.py first
-
     if make_sample and not sample_path:
         print('Making sample...')
         mono_path = make_sample(xling_path=xling_path, adj_path=sample_path)
@@ -35,32 +37,32 @@ if __name__ == '__main__':
         '--db_path',
         dest='db_path',
         default=None,
-        help='')
+    )
     parser.add_argument(
         '-cp',
         '--citations_path',
         dest='citations_path',
         default=None,
-        help='')
+    )
     parser.add_argument(
         '-ms',
         '--make_sample',
         dest='make_sample',
         default=False,
         action='store_true',
-        help='')
+    )
     parser.add_argument(
         '-xp',
         '--xling_path',
         dest='xling_path',
         default=None,
-        help='')
+    )
     parser.add_argument(
         '-sp',
         '--sample_path',
         dest='sample_path',
         default=None,
-        help='')
+    )
     args = parser.parse_args()
 
     main(
@@ -70,5 +72,3 @@ if __name__ == '__main__':
         make_sample=args.make_sample,
         sample_path=args.sample_path,
         )
-
-    # python prepare_data.py -db ../data/unarXive/samplerefs.db -xp ../data/unarXive/code/contexts_with_uuids_window=0_full.csv -sp ../data/citation_contexts/in_lang_docs_all_bibitems.tsv
