@@ -2,29 +2,30 @@ from argparse import ArgumentParser
 from prepare_data_helper import *
 
 
-def main(*, xling_path, sample_path, citations_path, db_path, make_sample):
-    # run extract_contexts_mod_orig.py
+def main(*, xling_path, citations_path, db_path, make_sample=False, sample_path=None):
+    # run extract_contexts_mod_orig.py first
 
-    if make_sample:
+    if make_sample and not sample_path:
         print('Making sample...')
-        db_path = make_sample(xling_path=xling_path, adj_path=sample_path)
-    else:
-        db_path = db_path
+        mono_path = make_sample(xling_path=xling_path, adj_path=sample_path)
+    elif not sample_path:
+        raise Error('Must supply a "sample_path".')    
 
     print('Filtering db...')
-    output_path = filter_db(db_path=db_path, citations_path=citations_path)
+    filter_db(db_path=db_path, citations_path=citations_path)
 
     print('Removing duplicates...')
-    output_path = remove_duplicates(output_path)
+    xling_path = remove_duplicates(xling_path)
+    mono_path = remove_duplicates(mono_path)
 
     print('Labeling mixed contexts...')
-    xling_path, mono_path = label_mixed(xling_path=, mono_path=)
+    xling_path, mono_path = label_mixed(xling_path=xling_path, mono_path=mono_path)
 
     print('Formatting files...')
-    xling_path = format_file(path=, xling_path=)
-    mono_path = format_file(path=, xling_path=)
+    xling_path = format_file(path=xling_path, xling_path=xling_path)
+    mono_path = format_file(path=mono_path, xling_path=xling_path)
 
-    print'Finished prepareing data.')
+    print('Finished prepareing data.')
 
 
 if __name__ == '__main__':
@@ -64,10 +65,10 @@ if __name__ == '__main__':
 
     main(
         xling_path=args.xling_path, 
-        sample_path=args.sample_path, 
         citations_path=args.citations_path, 
         db_path=args.db_path, 
-        make_sample=args.make_sample
+        make_sample=args.make_sample,
+        sample_path=args.sample_path,
         )
 
     # python prepare_data.py -db ../data/unarXive/samplerefs.db -xp ../data/unarXive/code/contexts_with_uuids_window=0_full.csv -sp ../data/citation_contexts/in_lang_docs_all_bibitems.tsv
