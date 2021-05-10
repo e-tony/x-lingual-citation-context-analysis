@@ -3,18 +3,7 @@ from torch.utils.data import DataLoader
 from ray.tune.logger import DEFAULT_LOGGERS
 from ray.tune.schedulers import PopulationBasedTraining
 from transformers import AutoConfig, AutoModelForSequenceClassification
-from transformers import (
-    AlbertTokenizerFast,
-    BertTokenizerFast,
-    DistilBertTokenizerFast,
-    ElectraTokenizerFast,
-    GPT2TokenizerFast,
-    ReformerTokenizerFast,
-    RobertaTokenizerFast,
-    T5TokenizerFast,
-    XLMRobertaTokenizerFast,
-    XLNetTokenizerFast,
-)
+from transformers import BertTokenizerFast
 from transformers import Trainer, TrainingArguments
 from transformers import TextClassificationPipeline
 from transformers import get_linear_schedule_with_warmup
