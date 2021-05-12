@@ -2,11 +2,13 @@
 bpemb==0.3.3
 datasets==1.5.0
 matplotlib==3.4.1
+nltk==3.6.2
 numpy==1.20.1
 pandas==1.2.3
 ray[tune]==1.2.0
 scikit-learn==0.24.1
 spacy==3.0.5
+sqlalchemy==1.4.14
 tokenizers==0.10.1
 torch==1.8.0
 torchaudio==0.8.0
